@@ -2,43 +2,33 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use Notifiable, HasRoles;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
+    /*  🔧  Ajustes clave  */
+    protected $table      = 'Usuario_Sistema';   // ← tabla real
+    protected $primaryKey = 'id_usuario';
+    public    $timestamps = false;               // tu tabla no tiene created_at
+    protected $fillable   = [                    // ← columnas que SÍ quieres guardar
+        'username',
+        'password_hash',
+        'rol',
+        'id_personal',
     ];
+    protected $hidden     = ['password_hash'];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    public function getAuthPassword()
+    {
+        return $this->password_hash;             // Breeze pide “password”
+    }
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    public function personal()                   // opcional
+    {
+        return $this->belongsTo(Personal::class, 'id_personal');
+    }
 }
