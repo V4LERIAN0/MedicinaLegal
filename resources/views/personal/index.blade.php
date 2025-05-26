@@ -1,31 +1,45 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            Personal
+        </h2>
+    </x-slot>
 
-@section('content')
-<div class="container">
-    <a href="{{ route('personal.create') }}" class="btn btn-primary mb-3">Nuevo Personal</a>
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900 dark:text-gray-100">
 
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+                    <a href="{{ route('personal.create') }}" class="btn btn-primary mb-3">
+                        Nuevo Personal
+                    </a>
 
-    <table class="table table-bordered">
-        <thead>
-            <tr><th>Nombre</th><th>Especialidad</th><th>Contacto</th><th>Id Cargo</th><th>Acciones</th></tr>
-        </thead>
-        <tbody>
-            @foreach($personals as $personal)
-            <tr>
-                <td>{{ $personal->nombre }}</td><td>{{ $personal->especialidad }}</td><td>{{ $personal->contacto }}</td><td>{{ $personal->id_cargo }}</td>
-                <td>
-                    <a href="{{ route('personal.edit', $personal) }}" class="btn btn-warning btn-sm">Editar</a>
-                    <form action="{{ route('personal.destroy', $personal) }}" method="POST" class="d-inline">
-                        @csrf @method('DELETE')
-                        <button onclick="return confirm('¿Eliminar?')" class="btn btn-danger btn-sm">Borrar</button>
-                    </form>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-</div>
-@endsection
+                    @if(session('success'))
+                        <div class="alert alert-success">{{ session('success') }}</div>
+                    @endif
+
+                    <table class="table table-bordered">
+                        <thead><tr><th>Nombre</th><th>Especialidad</th><th>Contacto</th><th>Id Cargo</th><th>Acciones</th></tr></thead>
+                        <tbody>
+                            @foreach($personals as $personal)
+                            <tr>
+                                <td>{{ $personal->nombre }}</td><td>{{ $personal->especialidad }}</td><td>{{ $personal->contacto }}</td><td>{{ $personal->id_cargo }}</td>
+                                <td>
+                                    <a href="{{ route('personal.edit', $personal) }}" class="btn btn-warning btn-sm">Editar</a>
+                                    <form action="{{ route('personal.destroy', $personal) }}" method="POST" class="d-inline">
+                                        @csrf @method('DELETE')
+                                        <button onclick="return confirm('¿Eliminar?')" class="btn btn-danger btn-sm">
+                                            Borrar
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</x-app-layout>
