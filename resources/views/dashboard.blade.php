@@ -1,42 +1,80 @@
 <x-app-layout>
-    {{-- Encabezado de la página --}}
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Dashboard') }}
+            Dashboard
         </h2>
     </x-slot>
 
-    {{-- Contenido principal --}}
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    {{ __("You're logged in!") }}
+        <div
+            class="max-w-6xl mx-auto grid gap-6
+                   sm:px-6 lg:px-8
+                   md:grid-cols-2 lg:grid-cols-3">
 
-                    {{-- Zona de accesos rápidos --}}
-                    <div class="mt-6 space-y-3">
+            {{-- Cargos --}}
+            @canany(['cargo.create','cargo.read','cargo.update','cargo.delete'])
+                <x-dashboard-tile title="Cargos" route="{{ route('cargo.index') }}"/>
+            @endcanany
 
-                        {{-- Enlace al CRUD de Cargo (cambia o duplica según necesites) --}}
-                        <a href="{{ route('cargo.index') }}"
-                           class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
-                            Ir a los módulos CRUD
-                        </a>
+            {{-- Personal --}}
+            @canany(['personal.create','personal.read','personal.update','personal.delete'])
+                <x-dashboard-tile title="Personal" route="{{ route('personal.index') }}"/>
+            @endcanany
 
-                        {{-- Ejemplos adicionales (descomenta o ajusta) --}}
-                        {{--
-                        <a href="{{ route('personal.index') }}"
-                           class="inline-block bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
-                            Personal
-                        </a>
+            {{-- Causa de muerte --}}
+            @canany(['causamuerte.create','causamuerte.read','causamuerte.update','causamuerte.delete'])
+                <x-dashboard-tile title="Causas de Muerte" route="{{ route('causamuerte.index') }}"/>
+            @endcanany
 
-                        <a href="{{ route('fallecido.index') }}"
-                           class="inline-block bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded">
-                            Fallecidos
-                        </a>
-                        --}}
-                    </div>
-                </div>
-            </div>
+            {{-- Salas --}}
+            @canany(['sala.create','sala.read','sala.update','sala.delete'])
+                <x-dashboard-tile title="Salas" route="{{ route('sala.index') }}"/>
+            @endcanany
+
+            {{-- Casos / Expedientes (fallecido) --}}
+            @canany(['fallecido.create','fallecido.read','fallecido.update','fallecido.delete'])
+                <x-dashboard-tile title="Casos / Expedientes" route="{{ route('fallecido.index') }}"/>
+            @endcanany
+
+            {{-- Autopsias --}}
+            @canany(['autopsia.create','autopsia.read','autopsia.update','autopsia.delete'])
+                <x-dashboard-tile title="Autopsias" route="{{ route('autopsia.index') }}"/>
+            @endcanany
+
+            {{-- Dictámenes --}}
+            @canany(['informe.create','informe.read','informe.update','informe.delete'])
+                <x-dashboard-tile title="Dictámenes" route="{{ route('informe.index') }}"/>
+            @endcanany
+
+            {{-- Evidencias --}}
+            @canany(['evidencia.create','evidencia.read','evidencia.update','evidencia.delete'])
+                <x-dashboard-tile title="Evidencias" route="{{ route('evidencia.index') }}"/>
+            @endcanany
+
+            {{-- Familiares --}}
+            @canany(['familiar.create','familiar.read','familiar.update','familiar.delete'])
+                <x-dashboard-tile title="Familiares" route="{{ route('familiar.index') }}"/>
+            @endcanany
+
+            {{-- Traslados --}}
+            @canany(['traslado.create','traslado.read','traslado.update','traslado.delete'])
+                <x-dashboard-tile title="Traslados" route="{{ route('traslado.index') }}"/>
+            @endcanany
+
+            {{-- Registro fotográfico --}}
+            @canany(['registro_fotografico.create','registro_fotografico.read','registro_fotografico.update','registro_fotografico.delete'])
+                <x-dashboard-tile title="Reg. Fotográfico" route="{{ route('registro_fotografico.index') }}"/>
+            @endcanany
+
+            {{-- Tóxico detectado --}}
+            @canany(['toxico_detectado.create','toxico_detectado.read','toxico_detectado.update','toxico_detectado.delete'])
+                <x-dashboard-tile title="Tóxicos Detectados" route="{{ route('toxico_detectado.index') }}"/>
+            @endcanany
+
+            {{-- Cadena de custodia --}}
+            @canany(['cadena_custodia.create','cadena_custodia.read','cadena_custodia.update','cadena_custodia.delete'])
+                <x-dashboard-tile title="Cadena de Custodia" route="{{ route('cadena_custodia.index') }}"/>
+            @endcanany
         </div>
     </div>
 </x-app-layout>
