@@ -10,7 +10,7 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
 
-                    <a href="{{ route('cadenacustodia.create') }}" class="btn btn-primary mb-3">
+                    <a href="{{ route('cadena_custodia.create') }}" class="btn btn-primary mb-3">
                         Nuevo Cadena de Custodia
                     </a>
 
@@ -25,8 +25,8 @@
                             <tr>
                                 <td>{{ $cadenacustodia->id_evidencia }}</td><td>{{ $cadenacustodia->recibido_por }}</td><td>{{ $cadenacustodia->entregado_por }}</td><td>{{ $cadenacustodia->fecha_hora }}</td><td>{{ $cadenacustodia->ubicacion_actual }}</td><td>{{ $cadenacustodia->observaciones }}</td>
                                 <td>
-                                    <a href="{{ route('cadenacustodia.edit', $cadenacustodia) }}" class="btn btn-warning btn-sm">Editar</a>
-                                    <form action="{{ route('cadenacustodia.destroy', $cadenacustodia) }}" method="POST" class="d-inline">
+                                    <a href="{{ route('cadena_custodia.edit', $cadenacustodia) }}" class="btn btn-warning btn-sm">Editar</a>
+                                    <form action="{{ route('cadena_custodia.destroy', $cadenacustodia) }}" method="POST" class="d-inline">
                                         @csrf @method('DELETE')
                                         <button onclick="return confirm('¿Eliminar?')" class="btn btn-danger btn-sm">
                                             Borrar

@@ -10,7 +10,7 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
 
-                    <a href="{{ route('toxicodetectado.create') }}" class="btn btn-primary mb-3">
+                    <a href="{{ route('toxico_detectado.create') }}" class="btn btn-primary mb-3">
                         Nuevo Tóxico Detectado
                     </a>
 
@@ -25,8 +25,8 @@
                             <tr>
                                 <td>{{ $toxicodetectado->id_autopsia }}</td><td>{{ $toxicodetectado->sustancia }}</td><td>{{ $toxicodetectado->nivel_detectado }}</td><td>{{ $toxicodetectado->observaciones }}</td>
                                 <td>
-                                    <a href="{{ route('toxicodetectado.edit', $toxicodetectado) }}" class="btn btn-warning btn-sm">Editar</a>
-                                    <form action="{{ route('toxicodetectado.destroy', $toxicodetectado) }}" method="POST" class="d-inline">
+                                    <a href="{{ route('toxico_detectado.edit', $toxicodetectado) }}" class="btn btn-warning btn-sm">Editar</a>
+                                    <form action="{{ route('toxico_detectado.destroy', $toxicodetectado) }}" method="POST" class="d-inline">
                                         @csrf @method('DELETE')
                                         <button onclick="return confirm('¿Eliminar?')" class="btn btn-danger btn-sm">
                                             Borrar
