@@ -6,16 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Personal extends Model
 {
-    protected $table      = 'Personal';
+    protected $table      = 'Personal';      // matches CREATE TABLE name
     protected $primaryKey = 'id_personal';
     public    $timestamps = false;
 
     protected $fillable = [
-        'nombre','apellido','id_cargo',
-        'especialidad','contacto'
+        'nombre', 'apellido', 'especialidad',
+        'contacto', 'id_cargo',             // <── list the FK here
     ];
 
-    /* Relaciones */
     public function cargo()
     {
         return $this->belongsTo(Cargo::class, 'id_cargo');

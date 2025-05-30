@@ -13,7 +13,7 @@ class Cargo extends Model
     protected $fillable = ['nombre'];
 
     /* Relaciones */
-    public function personal()
+    public function personals()
     {
         return $this->hasMany(Personal::class, 'id_cargo');
     }

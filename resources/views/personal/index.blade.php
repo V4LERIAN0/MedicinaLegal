@@ -1,48 +1,39 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            Personal
-        </h2>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-
-                    <a href="{{ route('personal.create') }}" class="btn btn-primary mb-3">
-                        Nuevo Personal
-                    </a>
-
-                    {{-- flash messages --}}
-                    <x-alert type="success"/>
-                    <x-alert type="danger"/>
-
-                    {{-- reusable table --}}
-                    <x-datatable :headers="['Nombre','Especialidad','Contacto','Cargo']">
-                        @forelse ($personals as $personal)
-                            <tr>
-                                <td class="px-4 py-2">{{ $personal->nombre }}</td>
-                                <td class="px-4 py-2">{{ $personal->especialidad }}</td>
-                                <td class="px-4 py-2">{{ $personal->contacto }}</td>
-                                <td class="px-4 py-2">{{ $personal->id_cargo }}</td>
-
-                                <td class="px-4 py-2 text-right space-x-2">
-                                    <x-edit-btn   :href="route('personal.edit',   $personal)" />
-                                    <x-delete-btn :action="route('personal.destroy',$personal)" />
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="p-4 italic text-center">
-                                    No hay registros.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </x-datatable>
-
-                </div>
-            </div>
-        </div>
+<x-app-layout title="Personal">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-semibold">Personal</h1>
+        <x-button href="{{ route('personal.create') }}">➕  Nuevo Personal</x-button>
     </div>
+
+    <x-table :headers="['Nombre', 'Apellido', 'Especialidad', 'Cargo', 'Contacto', 'Acciones']">
+        @foreach($personals as $personal)
+            <tr>
+                <td>{{ $personal->nombre }}</td>
+                <td>{{ $personal->apellido }}</td>
+                <td>{{ $personal->especialidad }}</td>
+                <td>{{ $personal->cargo->nombre ?? '—' }}</td>
+                <td>{{ $personal->contacto }}</td>
+
+                <td class="flex gap-2 items-center">
+                    <x-button color="secondary" href="{{ route('personal.edit',$personal) }}">
+                        Editar
+                    </x-button>
+
+                    @php $modal = 'del-'.$personal->id @endphp
+                    <label for="{{ $modal }}" class="btn btn-error btn-sm">Borrar</label>
+
+                    <x-modal-confirm :modal_id="$modal"
+                                     title="Eliminar personal"
+                                     :message="'¿Eliminar '.$personal->nombre.' '.$personal->apellido.'?'"
+                                     confirm="Eliminar">
+                        <form method="POST" action="{{ route('personal.destroy',$personal) }}">
+                            @csrf @method('DELETE')
+                            <x-button color="error" type="submit">Eliminar</x-button>
+                        </form>
+                    </x-modal-confirm>
+                </td>
+            </tr>
+        @endforeach
+    </x-table>
+
+    <div class="mt-6">{{ $personals->links() }}</div>
 </x-app-layout>
