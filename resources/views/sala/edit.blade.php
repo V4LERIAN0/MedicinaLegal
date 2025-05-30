@@ -1,39 +1,40 @@
-<x-app-layout>
-        <x-slot name="header">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Editar Sala
-            </h2>
-        </x-slot>
+<x-app-layout title="Editar Sala">
+    <h1 class="text-2xl font-semibold mb-6">Editar Sala</h1>
 
-        <div class="py-12">
-            <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900 dark:text-gray-100">
-                        <form action="{{ route('sala.update', $sala) }}" method="POST">
-                            @csrf @method('PUT')
+    <form method="POST" action="{{ route('sala.update',$sala) }}" class="space-y-6 max-w-md">
+        @csrf  @method('PUT')
 
-        <div class="mb-3">
-            <label class="form-label">Nombre</label>
-            <input type="text" name="nombre" class="form-control" value="{{ old('nombre', $sala->nombre ?? '') }}">
+        {{-- Nombre --}}
+        <div class="form-control">
+            <label class="label"><span class="label-text">Nombre</span></label>
+            <input name="nombre" class="input input-bordered"
+                   value="{{ old('nombre',$sala->nombre) }}" required>
+            @error('nombre') <span class="text-error text-sm">{{ $message }}</span>@enderror
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Tipo</label>
-            <select name="tipo" class="form-select">
-                <option value="Refrigeración">Refrigeración</option>
-<option value="Autopsia">Autopsia</option>
-<option value="Oficina">Oficina</option>
+        {{-- Tipo --}}
+        <div class="form-control">
+            <label class="label"><span class="label-text">Tipo</span></label>
+            <select name="tipo" class="select select-bordered" required>
+                @foreach(['Refrigeración','Autopsia','Oficina'] as $t)
+                    <option value="{{ $t }}"
+                            @selected(old('tipo',$sala->tipo)==$t)>
+                        {{ $t }}
+                    </option>
+                @endforeach
             </select>
+            @error('tipo') <span class="text-error text-sm">{{ $message }}</span>@enderror
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Capacidad</label>
-            <input type="number" name="capacidad" class="form-control" value="{{ old('capacidad', $sala->capacidad ?? '') }}">
+        {{-- Capacidad --}}
+        <div class="form-control">
+            <label class="label"><span class="label-text">Capacidad</span></label>
+            <input type="number" min="1" name="capacidad" class="input input-bordered"
+                   value="{{ old('capacidad',$sala->capacidad) }}" required>
+            @error('capacidad') <span class="text-error text-sm">{{ $message }}</span>@enderror
         </div>
-                            <button class="btn btn-success">Actualizar</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </x-app-layout>
+
+        <x-button type="submit">Actualizar</x-button>
+        <x-button color="ghost" href="{{ route('sala.index') }}">Cancelar</x-button>
+    </form>
+</x-app-layout>

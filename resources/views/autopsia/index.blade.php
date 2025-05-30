@@ -1,45 +1,36 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            Autopsia
-        </h2>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-
-                    <a href="{{ route('autopsia.create') }}" class="btn btn-primary mb-3">
-                        Nuevo Autopsia
-                    </a>
-
-                    @if(session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
-                    @endif
-
-                    <table class="table table-bordered">
-                        <thead><tr><th>Id Fallecido</th><th>Id Personal</th><th>Fecha Autopsia</th><th>Resultado</th><th>Acciones</th></tr></thead>
-                        <tbody>
-                            @foreach($autopsias as $autopsia)
-                            <tr>
-                                <td>{{ $autopsia->id_fallecido }}</td><td>{{ $autopsia->id_personal }}</td><td>{{ $autopsia->fecha_autopsia }}</td><td>{{ $autopsia->resultado }}</td>
-                                <td>
-                                    <a href="{{ route('autopsia.edit', $autopsia) }}" class="btn btn-warning btn-sm">Editar</a>
-                                    <form action="{{ route('autopsia.destroy', $autopsia) }}" method="POST" class="d-inline">
-                                        @csrf @method('DELETE')
-                                        <button onclick="return confirm('¿Eliminar?')" class="btn btn-danger btn-sm">
-                                            Borrar
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-
-                </div>
-            </div>
-        </div>
+<x-app-layout title="Autopsias">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-semibold">Autopsias</h1>
+        <x-button href="{{ route('autopsia.create') }}">➕ Nueva Autopsia</x-button>
     </div>
+
+    <x-table :headers="['Fallecido','Fecha','Realizada por','Resultado','Acciones']">
+        @foreach($autopsias as $a)
+            <tr>
+                <td>{{ $a->fallecido->nombre }} {{ $a->fallecido->apellido }}</td>
+                <td>{{ \Carbon\Carbon::parse($a->fecha_autopsia)->format('d-m-Y') }}</td>
+                <td>{{ $a->personal->nombre ?? '—' }} {{ $a->personal?->apellido }}</td>
+                <td class="truncate max-w-xs">{{ \Illuminate\Support\Str::limit($a->resultado,40) }}</td>
+
+                <td class="flex gap-2 items-center">
+                    <x-button color="secondary" href="{{ route('autopsia.edit',$a) }}">
+                        Editar
+                    </x-button>
+
+                    @php $m='del-'.$a->id_autopsia @endphp
+                    <label for="{{ $m }}" class="btn btn-error btn-sm">Borrar</label>
+
+                    <x-modal-confirm :modal_id="$m" title="Eliminar autopsia"
+                                     :message="'¿Eliminar autopsia #'.$a->id_autopsia.'?'">
+                        <form method="POST" action="{{ route('autopsia.destroy',$a) }}">
+                            @csrf @method('DELETE')
+                            <x-button color="error" type="submit">Eliminar</x-button>
+                        </form>
+                    </x-modal-confirm>
+                </td>
+            </tr>
+        @endforeach
+    </x-table>
+
+    <div class="mt-6">{{ $autopsias->links() }}</div>
 </x-app-layout>

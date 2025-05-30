@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class CausaMuerte extends Model
 {
-    protected $table      = 'CausaMuerte';
+    protected $table = 'CausaMuerte';
     protected $primaryKey = 'id_causa';
-    public    $timestamps = false;
+    public $timestamps = false;
 
     protected $fillable = ['descripcion'];
 

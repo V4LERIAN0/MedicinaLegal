@@ -2,47 +2,63 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\CadenaCustodia;
 use App\Models\Evidencia;
+use Illuminate\Http\Request;
 
 class CadenaCustodiaController extends Controller
 {
     public function index()
     {
-        $cadenacustodias = CadenaCustodia::all();
-        return view('cadenacustodia.index', compact('cadenacustodias'));
+        $custodias = CadenaCustodia::with('evidencia')->latest('fecha_hora')->paginate(10);
+        return view('custodia.index', compact('custodias'));
     }
 
     public function create()
     {
-        $evidencias = Evidencia::all();
-        return view('cadenacustodia.create', compact('evidencias'));
+        $evidencias = Evidencia::with('fallecido')->orderBy('id_evidencia')->get();
+        return view('custodia.create', compact('evidencias'));
     }
 
-    public function store(Request $request)
+    public function store(Request $r)
     {
-        $request->validate(['id_evidencia' => 'required|exists:Evidencia,id_evidencia', 'recibido_por' => 'required|max:100', 'entregado_por' => 'nullable|max:100', 'fecha_hora' => 'required|date', 'ubicacion_actual' => 'required|max:100', 'observaciones' => 'nullable|string']);
-        CadenaCustodia::create($request->all());
-        return redirect()->route('cadenacustodia.index')->with('success','Creado');
+        $data = $r->validate([
+            'id_evidencia'     => 'required|exists:Evidencia,id_evidencia',
+            'recibido_por'     => 'required|string|max:100',
+            'entregado_por'    => 'nullable|string|max:100',
+            'fecha_hora'       => 'required|date_format:Y-m-d\TH:i',
+            'ubicacion_actual' => 'required|string|max:100',
+            'observaciones'    => 'nullable|string',
+        ]);
+
+        CadenaCustodia::create($data);
+        return redirect()->route('custodia.index')->with('success','Registro creado');
     }
 
-    public function edit(CadenaCustodia $cadenacustodia)
+    public function edit(CadenaCustodia $custodia)
     {
-        $evidencias = Evidencia::all();
-        return view('cadenacustodia.edit', compact('cadenacustodia', 'evidencias'));
+        $evidencias = Evidencia::with('fallecido')->orderBy('id_evidencia')->get();
+        return view('custodia.edit', compact('custodia','evidencias'));
     }
 
-    public function update(Request $request, CadenaCustodia $cadenacustodia)
+    public function update(Request $r, CadenaCustodia $custodia)
     {
-        $request->validate(['id_evidencia' => 'required|exists:Evidencia,id_evidencia', 'recibido_por' => 'required|max:100', 'entregado_por' => 'nullable|max:100', 'fecha_hora' => 'required|date', 'ubicacion_actual' => 'required|max:100', 'observaciones' => 'nullable|string']);
-        $cadenacustodia->update($request->all());
-        return back()->with('success','Actualizado');
+        $data = $r->validate([
+            'id_evidencia'     => 'required|exists:Evidencia,id_evidencia',
+            'recibido_por'     => 'required|string|max:100',
+            'entregado_por'    => 'nullable|string|max:100',
+            'fecha_hora'       => 'required|date_format:Y-m-d\TH:i',
+            'ubicacion_actual' => 'required|string|max:100',
+            'observaciones'    => 'nullable|string',
+        ]);
+
+        $custodia->update($data);
+        return back()->with('success','Registro actualizado');
     }
 
-    public function destroy(CadenaCustodia $cadenacustodia)
+    public function destroy(CadenaCustodia $custodia)
     {
-        $cadenacustodia->delete();
-        return back()->with('success','Eliminado');
+        $custodia->delete();
+        return back()->with('success','Registro eliminado');
     }
 }

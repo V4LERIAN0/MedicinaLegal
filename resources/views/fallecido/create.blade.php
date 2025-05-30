@@ -1,76 +1,85 @@
-<x-app-layout>
-        <x-slot name="header">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Nuevo Fallecido
-            </h2>
-        </x-slot>
+<x-app-layout title="Nuevo Fallecido">
+    <h1 class="text-2xl font-semibold mb-6">Registrar Fallecido</h1>
 
-        <div class="py-12">
-            <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900 dark:text-gray-100">
-                        <form action="{{ route('fallecido.store') }}" method="POST">
-                            @csrf
+    <form method="POST" action="{{ route('fallecido.store') }}" class="space-y-6 max-w-xl">
+        @csrf
 
-        <div class="mb-3">
-            <label class="form-label">Nombre</label>
-            <input type="text" name="nombre" class="form-control" value="{{ old('nombre', $fallecido->nombre ?? '') }}">
+        {{-- Nombre --}}
+        <div class="form-control">
+            <label class="label"><span class="label-text">Nombre</span></label>
+            <input name="nombre" class="input input-bordered" value="{{ old('nombre') }}" required>
+            @error('nombre') <span class="text-error text-sm">{{ $message }}</span>@enderror
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Edad</label>
-            <input type="number" name="edad" class="form-control" value="{{ old('edad', $fallecido->edad ?? '') }}">
+        {{-- Apellido --}}
+        <div class="form-control">
+            <label class="label"><span class="label-text">Apellido</span></label>
+            <input name="apellido" class="input input-bordered" value="{{ old('apellido') }}" required>
+            @error('apellido') <span class="text-error text-sm">{{ $message }}</span> @enderror
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Sexo</label>
-            <select name="sexo" class="form-select">
-                <option value="Masculino">Masculino</option>
-<option value="Femenino">Femenino</option>
-<option value="Otro">Otro</option>
-<option value="Anciana">Anciana</option>
+        {{-- Edad --}}
+        <div class="form-control">
+            <label class="label"><span class="label-text">Edad</span></label>
+            <input type="number" min="0" max="150" name="edad"
+                   class="input input-bordered" value="{{ old('edad') }}" required>
+            @error('edad') <span class="text-error text-sm">{{ $message }}</span>@enderror
+        </div>
+
+        {{-- Sexo --}}
+        <div class="form-control">
+            <label class="label"><span class="label-text">Sexo</span></label>
+            <select name="sexo" class="select select-bordered" required>
+                @foreach(['Masculino','Femenino','Otro','Anciana'] as $s)
+                    <option value="{{ $s }}" @selected(old('sexo')==$s)>{{ $s }}</option>
+                @endforeach
             </select>
+            @error('sexo') <span class="text-error text-sm">{{ $message }}</span>@enderror
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Fecha Ingreso</label>
-            <input type="date" name="fecha_ingreso" class="form-control" value="{{ old('fecha_ingreso', $fallecido->fecha_ingreso ?? '') }}">
+        {{-- Fecha ingreso --}}
+        <div class="form-control">
+            <label class="label"><span class="label-text">Fecha de ingreso</span></label>
+            <input type="date" name="fecha_ingreso" class="input input-bordered"
+                   value="{{ old('fecha_ingreso') ?: now()->toDateString() }}" required>
+            @error('fecha_ingreso') <span class="text-error text-sm">{{ $message }}</span>@enderror
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Id Causa</label>
-            <select name="id_causa" class="form-select">
-                <option value="">-- seleccione --</option>
-                @foreach($causas as $opt)
-                    <option value="{{ $opt->id_causa }}"
-                        {{ old('id_causa', $fallecido->id_causa ?? '') == $opt->id_causa ? 'selected' : '' }}>
-                        {{ $opt->nombre ?? $opt->descripcion ?? 'opción' }}
+        {{-- Causa de muerte (opcional) --}}
+        <div class="form-control">
+            <label class="label"><span class="label-text">Causa de muerte (opcional)</span></label>
+            <select name="id_causa" class="select select-bordered">
+                <option value="">— Sin especificar —</option>
+                @foreach($causas as $c)
+                    <option value="{{ $c->id_causa }}" @selected(old('id_causa')==$c->id_causa)>
+                        {{ $c->descripcion }}
                     </option>
                 @endforeach
             </select>
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Id Sala</label>
-            <select name="id_sala" class="form-select">
-                <option value="">-- seleccione --</option>
-                @foreach($salas as $opt)
-                    <option value="{{ $opt->id_sala }}"
-                        {{ old('id_sala', $fallecido->id_sala ?? '') == $opt->id_sala ? 'selected' : '' }}>
-                        {{ $opt->nombre ?? $opt->descripcion ?? 'opción' }}
+        {{-- Sala (opcional) --}}
+        <div class="form-control">
+            <label class="label"><span class="label-text">Sala actual (opcional)</span></label>
+            <select name="id_sala" class="select select-bordered">
+                <option value="">— Sin asignar —</option>
+                @foreach($salas as $s)
+                    <option value="{{ $s->id_sala }}" @selected(old('id_sala')==$s->id_sala)>
+                        {{ $s->nombre }}
                     </option>
                 @endforeach
             </select>
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Observaciones</label>
-            <textarea name="observaciones" class="form-control">{{ old('observaciones', $fallecido->observaciones ?? '') }}</textarea>
+        {{-- Observaciones --}}
+        <div class="form-control">
+            <label class="label"><span class="label-text">Observaciones</span></label>
+            <textarea name="observaciones" rows="3" class="textarea textarea-bordered">{{ old('observaciones') }}</textarea>
         </div>
-                            <button class="btn btn-success">Guardar</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+
+        <div class="flex gap-3">
+            <x-button type="submit">Guardar</x-button>
+            <x-button color="ghost" href="{{ route('fallecido.index') }}">Cancelar</x-button>
         </div>
-    </x-app-layout>
+    </form>
+</x-app-layout>

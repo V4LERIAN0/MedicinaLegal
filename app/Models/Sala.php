@@ -12,18 +12,7 @@ class Sala extends Model
 
     protected $fillable = ['nombre','tipo','capacidad'];
 
-    public function fallecidos()
-    {
-        return $this->hasMany(Fallecido::class, 'id_sala');
-    }
-
-    public function trasladosOrigen()
-    {
-        return $this->hasMany(Traslado::class, 'id_sala_origen');
-    }
-
-    public function trasladosDestino()
-    {
-        return $this->hasMany(Traslado::class, 'id_sala_destino');
-    }
+    public function fallecidosOrigen()  { return $this->hasMany(Fallecido::class, 'id_sala'); }
+    public function trasladosOrigen()   { return $this->hasMany(Traslado::class, 'id_sala_origen'); }
+    public function trasladosDestino()  { return $this->hasMany(Traslado::class, 'id_sala_destino'); }
 }

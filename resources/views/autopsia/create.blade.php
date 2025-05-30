@@ -1,56 +1,53 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            Nuevo Autopsia
-        </h2>
-    </x-slot>
+<x-app-layout title="Nueva Autopsia">
+    <h1 class="text-2xl font-semibold mb-6">Registrar Autopsia</h1>
 
-    <div class="py-12">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <form action="{{ route('autopsia.store') }}" method="POST">
-                        @csrf
+    <form method="POST" action="{{ route('autopsia.store') }}" class="space-y-6 max-w-lg">
+        @csrf
 
-    <div class="mb-3">
-        <label class="form-label">Id Fallecido</label>
-        <select name="id_fallecido" class="form-select">
-            <option value="">-- seleccione --</option>
-            @foreach($fallecidos as $opt)
-                <option value="{{ $opt->id_fallecido }}"
-                    {{ old('id_fallecido', $autopsia->id_fallecido ?? '') == $opt->id_fallecido ? 'selected' : '' }}>
-                    {{ $opt->nombre ?? $opt->descripcion ?? 'opción' }}
-                </option>
-            @endforeach
-        </select>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Id Personal</label>
-        <select name="id_personal" class="form-select">
-            <option value="">-- seleccione --</option>
-            @foreach($personal as $opt)
-                <option value="{{ $opt->id_persona }}"
-                    {{ old('id_personal', $autopsia->id_personal ?? '') == $opt->id_persona ? 'selected' : '' }}>
-                    {{ $opt->nombre ?? $opt->descripcion ?? 'opción' }}
-                </option>
-            @endforeach
-        </select>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Fecha Autopsia</label>
-        <input type="date" name="fecha_autopsia" class="form-control" value="{{ old('fecha_autopsia', $autopsia->fecha_autopsia ?? '') }}">
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Resultado</label>
-        <textarea name="resultado" class="form-control">{{ old('resultado', $autopsia->resultado ?? '') }}</textarea>
-    </div>
-                        <button class="btn btn-success">Guardar</button>
-                    </form>
-                </div>
-            </div>
+        {{-- Fallecido (obligatorio) --}}
+        <div class="form-control">
+            <label class="label"><span class="label-text">Fallecido</span></label>
+            <select name="id_fallecido" class="select select-bordered" required>
+                <option value="" disabled selected>Seleccione un fallecido…</option>
+                @foreach($fallecidos as $f)
+                    <option value="{{ $f->id_fallecido }}" @selected(old('id_fallecido')==$f->id_fallecido)>
+                        {{ $f->nombre }} ({{ $f->id_fallecido }})
+                    </option>
+                @endforeach
+            </select>
+            @error('id_fallecido') <span class="text-error text-sm">{{ $message }}</span>@enderror
         </div>
-    </div>
+
+        {{-- Personal (opcional) --}}
+        <div class="form-control">
+            <label class="label"><span class="label-text">Médico forense (opcional)</span></label>
+            <select name="id_personal" class="select select-bordered">
+                <option value="">— Sin asignar —</option>
+                @foreach($personales as $p)
+                    <option value="{{ $p->id_personal }}" @selected(old('id_personal')==$p->id_personal)>
+                        {{ $p->nombre }} {{ $p->apellido }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        {{-- Fecha --}}
+        <div class="form-control">
+            <label class="label"><span class="label-text">Fecha de autopsia</span></label>
+            <input type="date" name="fecha_autopsia" class="input input-bordered"
+                   value="{{ old('fecha_autopsia') ?: now()->toDateString() }}" required>
+        </div>
+
+        {{-- Resultado --}}
+        <div class="form-control">
+            <label class="label"><span class="label-text">Resultado (opcional)</span></label>
+            <textarea name="resultado" rows="4"
+                      class="textarea textarea-bordered">{{ old('resultado') }}</textarea>
+        </div>
+
+        <div class="flex gap-3">
+            <x-button type="submit">Guardar</x-button>
+            <x-button color="ghost" href="{{ route('autopsia.index') }}">Cancelar</x-button>
+        </div>
+    </form>
 </x-app-layout>

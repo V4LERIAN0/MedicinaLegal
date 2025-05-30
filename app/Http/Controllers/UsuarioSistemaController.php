@@ -2,47 +2,70 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\UsuarioSistema;
 use App\Models\Personal;
+use Illuminate\Http\Request;
 
 class UsuarioSistemaController extends Controller
 {
     public function index()
     {
-        $usuariosistemas = UsuarioSistema::all();
-        return view('usuariosistema.index', compact('usuariosistemas'));
+        $usuarios = UsuarioSistema::with('personal')->paginate(10);
+        return view('usuarios.index', compact('usuarios'));
     }
 
     public function create()
     {
-        $personal = Personal::all();
-        return view('usuariosistema.create', compact('personal'));
+        $personales = Personal::orderBy('nombre')->get();
+        return view('usuarios.create', compact('personales'));
     }
 
-    public function store(Request $request)
+    public function store(Request $r)
     {
-        $request->validate(['username' => 'required|max:50|unique:Usuario_Sistema,username', 'password_hash' => 'required|max:255', 'rol' => 'required|in:Administrador,Forense,Recepcionista', 'id_personal' => 'nullable|exists:Personal,id_personal']);
-        UsuarioSistema::create($request->all());
-        return redirect()->route('usuariosistema.index')->with('success','Creado');
+        $data = $r->validate([
+            'username'   => 'required|string|max:50|unique:Usuario_Sistema,username',
+            'password'   => 'required|string|min:6|confirmed',
+            'rol'        => 'required|in:Administrador,Forense,Recepcionista',
+            'id_personal'=> 'nullable|exists:Personal,id_personal',
+        ]);
+
+        $usuario = UsuarioSistema::create([
+            'username'       => $data['username'],
+            'password_hash'  => $data['password'],  
+            'rol'            => $data['rol'],
+            'id_personal'    => $data['id_personal'],
+        ]);
+
+        return redirect()->route('usuario.index')->with('success','Usuario creado');
     }
 
-    public function edit(UsuarioSistema $usuariosistema)
+    public function edit(UsuarioSistema $usuario)
     {
-        $personal = Personal::all();
-        return view('usuariosistema.edit', compact('usuariosistema', 'personal'));
+        $personales = Personal::orderBy('nombre')->get();
+        return view('usuarios.edit', compact('usuario','personales'));
     }
 
-    public function update(Request $request, UsuarioSistema $usuariosistema)
+    public function update(Request $r, UsuarioSistema $usuario)
     {
-        $request->validate(['username' => 'required|max:50|unique:Usuario_Sistema,username,$usuariosistema->id_usuario,id_usuario', 'password_hash' => 'required|max:255', 'rol' => 'required|in:Administrador,Forense,Recepcionista', 'id_personal' => 'nullable|exists:Personal,id_personal']);
-        $usuariosistema->update($request->all());
+        $data = $r->validate([
+            'password'   => 'nullable|string|min:6|confirmed',
+            'rol'        => 'required|in:Administrador,Forense,Recepcionista',
+            'id_personal'=> 'nullable|exists:Personal,id_personal',
+        ]);
+
+        if ($r->filled('password')) {
+            $usuario->password_hash = $data['password'];
+        }
+        $usuario->rol         = $data['rol'];
+        $usuario->id_personal = $data['id_personal'];
+        $usuario->save();
+
         return back()->with('success','Actualizado');
     }
 
-    public function destroy(UsuarioSistema $usuariosistema)
+    public function destroy(UsuarioSistema $usuario)
     {
-        $usuariosistema->delete();
+        $usuario->delete();
         return back()->with('success','Eliminado');
     }
 }

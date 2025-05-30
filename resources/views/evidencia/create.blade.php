@@ -1,53 +1,51 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            Nuevo Evidencia
-        </h2>
-    </x-slot>
+<x-app-layout title="Nueva Evidencia">
+    <h1 class="text-2xl font-semibold mb-6">Registrar Evidencia</h1>
 
-    <div class="py-12">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <form action="{{ route('evidencia.store') }}" method="POST">
-                        @csrf
+    <form method="POST" action="{{ route('evidencia.store') }}" class="space-y-6 max-w-xl">
+        @csrf
 
-    <div class="mb-3">
-        <label class="form-label">Id Fallecido</label>
-        <select name="id_fallecido" class="form-select">
-            <option value="">-- seleccione --</option>
-            @foreach($fallecidos as $opt)
-                <option value="{{ $opt->id_fallecido }}"
-                    {{ old('id_fallecido', $evidencia->id_fallecido ?? '') == $opt->id_fallecido ? 'selected' : '' }}>
-                    {{ $opt->nombre ?? $opt->descripcion ?? 'opción' }}
-                </option>
-            @endforeach
-        </select>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Descripcion</label>
-        <textarea name="descripcion" class="form-control">{{ old('descripcion', $evidencia->descripcion ?? '') }}</textarea>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Tipo</label>
-        <input type="text" name="tipo" class="form-control" value="{{ old('tipo', $evidencia->tipo ?? '') }}">
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Fecha Recoleccion</label>
-        <input type="date" name="fecha_recoleccion" class="form-control" value="{{ old('fecha_recoleccion', $evidencia->fecha_recoleccion ?? '') }}">
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Almacenado En</label>
-        <input type="text" name="almacenado_en" class="form-control" value="{{ old('almacenado_en', $evidencia->almacenado_en ?? '') }}">
-    </div>
-                        <button class="btn btn-success">Guardar</button>
-                    </form>
-                </div>
-            </div>
+        {{-- Fallecido --}}
+        <div class="form-control">
+            <label class="label"><span class="label-text">Fallecido</span></label>
+            <select name="id_fallecido" class="select select-bordered" required>
+                <option disabled selected value="">Seleccione…</option>
+                @foreach($fallecidos as $f)
+                    <option value="{{ $f->id_fallecido }}"
+                            @selected(old('id_fallecido')==$f->id_fallecido)>
+                        {{ $f->nombre }} {{ $f->apellido }}
+                    </option>
+                @endforeach
+            </select>
         </div>
-    </div>
+
+        {{-- Tipo --}}
+        <div class="form-control">
+            <label class="label"><span class="label-text">Tipo</span></label>
+            <input name="tipo" class="input input-bordered" value="{{ old('tipo') }}" required>
+        </div>
+
+        {{-- Descripción --}}
+        <div class="form-control">
+            <label class="label"><span class="label-text">Descripción</span></label>
+            <textarea name="descripcion" rows="3" class="textarea textarea-bordered" required>{{ old('descripcion') }}</textarea>
+        </div>
+
+        {{-- Fecha de recolección --}}
+        <div class="form-control">
+            <label class="label"><span class="label-text">Fecha de recolección</span></label>
+            <input type="date" name="fecha_recoleccion" class="input input-bordered"
+                   value="{{ old('fecha_recoleccion') ?: now()->toDateString() }}" required>
+        </div>
+
+        {{-- Ubicación --}}
+        <div class="form-control">
+            <label class="label"><span class="label-text">Almacenado en (opcional)</span></label>
+            <input name="almacenado_en" class="input input-bordered" value="{{ old('almacenado_en') }}">
+        </div>
+
+        <div class="flex gap-3">
+            <x-button type="submit">Guardar</x-button>
+            <x-button color="ghost" href="{{ route('evidencia.index') }}">Cancelar</x-button>
+        </div>
+    </form>
 </x-app-layout>

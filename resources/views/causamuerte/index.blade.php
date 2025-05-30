@@ -1,45 +1,34 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            Causa de Muerte
-        </h2>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-
-                    <a href="{{ route('causamuerte.create') }}" class="btn btn-primary mb-3">
-                        Nuevo Causa de Muerte
-                    </a>
-
-                    @if(session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
-                    @endif
-
-                    <table class="table table-bordered">
-                        <thead><tr><th>Descripcion</th><th>Acciones</th></tr></thead>
-                        <tbody>
-                            @foreach($causamuertes as $causamuerte)
-                            <tr>
-                                <td>{{ $causamuerte->descripcion }}</td>
-                                <td>
-                                    <a href="{{ route('causamuerte.edit', $causamuerte) }}" class="btn btn-warning btn-sm">Editar</a>
-                                    <form action="{{ route('causamuerte.destroy', $causamuerte) }}" method="POST" class="d-inline">
-                                        @csrf @method('DELETE')
-                                        <button onclick="return confirm('¿Eliminar?')" class="btn btn-danger btn-sm">
-                                            Borrar
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-
-                </div>
-            </div>
-        </div>
+<x-app-layout title="Causas de Muerte">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-semibold">Causas de Muerte</h1>
+        <x-button href="{{ route('causamuerte.create') }}">➕ Nueva causa</x-button>
     </div>
+
+    <x-table :headers="['Descripción','Acciones']">
+    @foreach($causas as $causa)
+        {{-- Keep local $causa for readability --}}
+        <tr>
+            <td>{{ $causa->descripcion }}</td>
+            <td class="flex gap-2 items-center">
+                <x-button color="secondary"
+                          href="{{ route('causamuerte.edit', $causa) }}">Editar</x-button>
+
+                @php $m = 'del-'.$causa->id_causa @endphp
+                <label for="{{ $m }}" class="btn btn-error btn-sm">Borrar</label>
+
+                <x-modal-confirm :modal_id="$m"
+                                 title="Eliminar causa"
+                                 :message="'¿Eliminar '.$causa->descripcion.'?'">
+                    <form method="POST" action="{{ route('causamuerte.destroy',$causa) }}">
+                        @csrf @method('DELETE')
+                        <x-button color="error" type="submit">Eliminar</x-button>
+                    </form>
+                </x-modal-confirm>
+            </td>
+        </tr>
+    @endforeach
+</x-table>
+
+
+    <div class="mt-6">{{ $causas->links() }}</div>
 </x-app-layout>

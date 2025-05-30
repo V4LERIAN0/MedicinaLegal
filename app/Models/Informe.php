@@ -11,8 +11,8 @@ class Informe extends Model
     public    $timestamps = false;
 
     protected $fillable = [
-        'id_autopsia','fecha_emision',
-        'observaciones','firmado_por'
+        'id_autopsia', 'fecha_emision',
+        'observaciones', 'firmado_por',
     ];
 
     public function autopsia()

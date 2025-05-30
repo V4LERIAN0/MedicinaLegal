@@ -1,45 +1,39 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            Fallecido
-        </h2>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-
-                    <a href="{{ route('fallecido.create') }}" class="btn btn-primary mb-3">
-                        Nuevo Fallecido
-                    </a>
-
-                    @if(session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
-                    @endif
-
-                    <table class="table table-bordered">
-                        <thead><tr><th>Nombre</th><th>Edad</th><th>Sexo</th><th>Fecha Ingreso</th><th>Id Causa</th><th>Id Sala</th><th>Observaciones</th><th>Acciones</th></tr></thead>
-                        <tbody>
-                            @foreach($fallecidos as $fallecido)
-                            <tr>
-                                <td>{{ $fallecido->nombre }}</td><td>{{ $fallecido->edad }}</td><td>{{ $fallecido->sexo }}</td><td>{{ $fallecido->fecha_ingreso }}</td><td>{{ $fallecido->id_causa }}</td><td>{{ $fallecido->id_sala }}</td><td>{{ $fallecido->observaciones }}</td>
-                                <td>
-                                    <a href="{{ route('fallecido.edit', $fallecido) }}" class="btn btn-warning btn-sm">Editar</a>
-                                    <form action="{{ route('fallecido.destroy', $fallecido) }}" method="POST" class="d-inline">
-                                        @csrf @method('DELETE')
-                                        <button onclick="return confirm('¿Eliminar?')" class="btn btn-danger btn-sm">
-                                            Borrar
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-
-                </div>
-            </div>
-        </div>
+<x-app-layout title="Fallecidos">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-semibold">Fallecidos</h1>
+        <x-button href="{{ route('fallecido.create') }}">➕ Nuevo Fallecido</x-button>
     </div>
+
+    <x-table :headers="['Nombre', 'Apellido', 'Edad','Sexo','Causa','Sala', 'Observaciones', 'Ingreso','Acciones']">
+        @foreach($fallecidos as $f)
+            <tr>
+                <td>{{ $f->nombre }}</td>
+                <td>{{ $f->apellido}}</td>
+                <td>{{ $f->edad }}</td>
+                <td>{{ $f->sexo }}</td>
+                <td>{{ $f->causa->descripcion ?? '—' }}</td>
+                <td>{{ $f->sala->nombre        ?? '—' }}</td>
+                <td>{{ $f->observaciones }}</td>
+                <td>{{ \Carbon\Carbon::parse($f->fecha_ingreso)->format('d-m-Y') }}</td>
+
+                <td class="flex gap-2 items-center">
+                    <x-button color="secondary"
+                              href="{{ route('fallecido.edit',$f) }}">Editar</x-button>
+
+                    @php $m = 'del-'.$f->id_fallecido @endphp
+                    <label for="{{ $m }}" class="btn btn-error btn-sm">Borrar</label>
+
+                    <x-modal-confirm :modal_id="$m" title="Eliminar fallecido"
+                                     :message="'¿Eliminar '.$f->nombre.'?'" >
+                        <form method="POST" action="{{ route('fallecido.destroy',$f) }}">
+                            @csrf @method('DELETE')
+                            <x-button color="error" type="submit">Eliminar</x-button>
+                        </form>
+                    </x-modal-confirm>
+                </td>
+            </tr>
+        @endforeach
+    </x-table>
+
+    <div class="mt-6">{{ $fallecidos->links() }}</div>
 </x-app-layout>

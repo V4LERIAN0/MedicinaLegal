@@ -11,8 +11,8 @@ class ToxicoDetectado extends Model
     public    $timestamps = false;
 
     protected $fillable = [
-        'id_autopsia','sustancia',
-        'nivel_detectado','observaciones'
+        'id_autopsia', 'sustancia',
+        'nivel_detectado', 'observaciones',
     ];
 
     public function autopsia()

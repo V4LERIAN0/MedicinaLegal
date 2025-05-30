@@ -1,69 +1,69 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            Nuevo Traslado
-        </h2>
-    </x-slot>
+<x-app-layout title="Nuevo Traslado">
+    <h1 class="text-2xl font-semibold mb-6">Registrar Traslado</h1>
 
-    <div class="py-12">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <form action="{{ route('traslado.store') }}" method="POST">
-                        @csrf
+    <form method="POST" action="{{ route('traslado.store') }}" class="space-y-6 max-w-xl">
+        @csrf
 
-    <div class="mb-3">
-        <label class="form-label">Id Fallecido</label>
-        <select name="id_fallecido" class="form-select">
-            <option value="">-- seleccione --</option>
-            @foreach($fallecidos as $opt)
-                <option value="{{ $opt->id_fallecido }}"
-                    {{ old('id_fallecido', $traslado->id_fallecido ?? '') == $opt->id_fallecido ? 'selected' : '' }}>
-                    {{ $opt->nombre ?? $opt->descripcion ?? 'opción' }}
-                </option>
-            @endforeach
-        </select>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Id Sala Origen</label>
-        <select name="id_sala_origen" class="form-select">
-            <option value="">-- seleccione --</option>
-            @foreach($salas as $opt)
-                <option value="{{ $opt->id_sala }}"
-                    {{ old('id_sala_origen', $traslado->id_sala_origen ?? '') == $opt->id_sala ? 'selected' : '' }}>
-                    {{ $opt->nombre ?? $opt->descripcion ?? 'opción' }}
-                </option>
-            @endforeach
-        </select>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Id Sala Destino</label>
-        <select name="id_sala_destino" class="form-select">
-            <option value="">-- seleccione --</option>
-            @foreach($salas as $opt)
-                <option value="{{ $opt->id_sala }}"
-                    {{ old('id_sala_destino', $traslado->id_sala_destino ?? '') == $opt->id_sala ? 'selected' : '' }}>
-                    {{ $opt->nombre ?? $opt->descripcion ?? 'opción' }}
-                </option>
-            @endforeach
-        </select>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Fecha Traslado</label>
-        <input type="datetime-local" name="fecha_traslado" class="form-control" value="{{ old('fecha_traslado', $traslado->fecha_traslado ?? '') }}">
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Motivo</label>
-        <input type="text" name="motivo" class="form-control" value="{{ old('motivo', $traslado->motivo ?? '') }}">
-    </div>
-                        <button class="btn btn-success">Guardar</button>
-                    </form>
-                </div>
-            </div>
+        {{-- Fallecido --}}
+        <div class="form-control">
+            <label class="label"><span class="label-text">Fallecido</span></label>
+            <select name="id_fallecido" class="select select-bordered" required>
+                <option value="" disabled selected>Seleccione un fallecido…</option>
+                @foreach($fallecidos as $f)
+                    <option value="{{ $f->id_fallecido }}"
+                            @selected(old('id_fallecido')==$f->id_fallecido)>
+                        {{ $f->nombre }} {{ $f->apellido }}
+                    </option>
+                @endforeach
+            </select>
+            @error('id_fallecido')<span class="text-error text-sm">{{ $message }}</span>@enderror
         </div>
-    </div>
+
+        {{-- Sala origen --}}
+        <div class="form-control">
+            <label class="label"><span class="label-text">Sala origen (opcional)</span></label>
+            <select name="id_sala_origen" class="select select-bordered">
+                <option value="">— Sin origen —</option>
+                @foreach($salas as $s)
+                    <option value="{{ $s->id_sala }}"
+                            @selected(old('id_sala_origen')==$s->id_sala)>
+                        {{ $s->nombre }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        {{-- Sala destino --}}
+        <div class="form-control">
+            <label class="label"><span class="label-text">Sala destino (opcional)</span></label>
+            <select name="id_sala_destino" class="select select-bordered">
+                <option value="">— Sin destino —</option>
+                @foreach($salas as $s)
+                    <option value="{{ $s->id_sala }}"
+                            @selected(old('id_sala_destino')==$s->id_sala)>
+                        {{ $s->nombre }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        {{-- Fecha & hora --}}
+        <div class="form-control">
+            <label class="label"><span class="label-text">Fecha y hora de traslado</span></label>
+            <input type="datetime-local" name="fecha_traslado" class="input input-bordered"
+                   value="{{ old('fecha_traslado') ?: now()->format('Y-m-d\TH:i') }}" required>
+            @error('fecha_traslado')<span class="text-error text-sm">{{ $message }}</span>@enderror
+        </div>
+
+        {{-- Motivo --}}
+        <div class="form-control">
+            <label class="label"><span class="label-text">Motivo (opcional)</span></label>
+            <input name="motivo" class="input input-bordered" value="{{ old('motivo') }}">
+        </div>
+
+        <div class="flex gap-3">
+            <x-button type="submit">Guardar</x-button>
+            <x-button color="ghost" href="{{ route('traslado.index') }}">Cancelar</x-button>
+        </div>
+    </form>
 </x-app-layout>

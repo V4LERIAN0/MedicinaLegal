@@ -1,32 +1,40 @@
 <?php
 
+// app/Models/UsuarioSistema.php
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Foundation\Auth\User as Authenticatable;   // <-- Key!
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 
 class UsuarioSistema extends Authenticatable
 {
-    /* Si planeas usar esta tabla para login extiende Authenticatable;
-       si no, cámbialo a Model. */
+    use Notifiable;
+
     protected $table      = 'Usuario_Sistema';
     protected $primaryKey = 'id_usuario';
     public    $timestamps = false;
+    protected $guard      = 'usuarios';                    // custom guard name
 
     protected $fillable = [
-        'username','password_hash',
-        'rol','id_personal'
+        'username','password_hash','rol','id_personal',
     ];
 
     protected $hidden = ['password_hash'];
 
-    public function getAuthPassword()
+    /* Tell Auth where the real password lives */
+    public function getAuthPassword() { return $this->password_hash; }
+
+    /* Mutator – hashes whenever we set password_hash */
+    public function setPasswordHashAttribute($value)
     {
-        return $this->password_hash;
+        $this->attributes['password_hash'] =
+            Hash::needsRehash($value) ? Hash::make($value) : $value;
     }
 
+    /* relationship (optional) */
     public function personal()
     {
-        return $this->belongsTo(Personal::class, 'id_personal');
+        return $this->belongsTo(Personal::class,'id_personal');
     }
 }

@@ -15,7 +15,8 @@ use App\Http\Controllers\{
     RegistroFotograficoController,
     ToxicoDetectadoController,
     CadenaCustodiaController,
-    ProfileController
+    ProfileController,
+    UsuarioSistemaController
 };
 
 /* ---------- públicas ---------- */
@@ -52,31 +53,39 @@ Route::middleware('permission:fallecido.read|fallecido.create|fallecido.update|f
     ->resource('fallecido', FallecidoController::class);
 
 Route::middleware('permission:autopsia.read|autopsia.create|autopsia.update|autopsia.delete')
-    ->resource('autopsia', AutopsiaController::class);
+    ->resource('autopsia', AutopsiaController::class)->parameters(['autopsia' => 'autopsia']);
 
 Route::middleware('permission:informe.read|informe.create|informe.update|informe.delete')
-    ->resource('informe', InformeController::class);
+    ->resource('informe', InformeController::class)
+    ->parameters(['informe' => 'informe']);
+
 
 Route::middleware('permission:evidencia.read|evidencia.create|evidencia.update|evidencia.delete')
-    ->resource('evidencia', EvidenciaController::class);
+    ->resource('evidencia', EvidenciaController::class)
+    ->parameters(['evidencia' => 'evidencia']);   
+
 
 Route::middleware('permission:familiar.read|familiar.create|familiar.update|familiar.delete')
     ->resource('familiar', FamiliarController::class);
 
 Route::middleware('permission:traslado.read|traslado.create|traslado.update|traslado.delete')
-    ->resource('traslado', TrasladoController::class);
-
-//Route::middleware('permission:registro_fotografico.read|registro_fotografico.create|registro_fotografico.update|registro_fotografico.delete')
-  //  ->resource('registro_fotografico', RegistroFotograficoController::class);
+    ->resource('traslado', TrasladoController::class)
+    ->parameters(['traslado' => 'traslado']);
+    
+Route::middleware(['auth', 'permission:registro_fotografico.read|registro_fotografico.create|registro_fotografico.update|registro_fotografico.delete'])
+    ->resource('registro_fotografico', RegistroFotograficoController::class);
 
 Route::middleware('permission:toxico_detectado.read|toxico_detectado.create|toxico_detectado.update|toxico_detectado.delete')
-    ->resource('toxico_detectado', ToxicoDetectadoController::class);
+      ->resource('toxico_detectado', ToxicoDetectadoController::class)
+      ->parameters(['toxico_detectado' => 'toxico_detectado']);   // pin parameter
 
 Route::middleware('permission:cadena_custodia.read|cadena_custodia.create|cadena_custodia.update|cadena_custodia.delete')
-    ->resource('cadena_custodia', CadenaCustodiaController::class);
+    ->resource('custodia', CadenaCustodiaController::class)
+    ->parameters(['custodia' => 'custodia']);          // pin {custodia}
 
-//Route::middleware('permission:usuario_sistema.read|usuario_sistema.create|usuario_sistema.update|usuario_sistema.delete')
-  //  ->resource('usuario', UsuarioSistemaController::class);
+Route::middleware('permission:usuario_sistema.read|usuario_sistema.create|usuario_sistema.update|usuario_sistema.delete')
+      ->resource('usuario', UsuarioSistemaController::class)
+      ->parameters(['usuario' => 'usuario']);
 
 });
 

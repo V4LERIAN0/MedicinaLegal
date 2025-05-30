@@ -12,11 +12,11 @@ class CadenaCustodia extends Model
 
     protected $fillable = [
         'id_evidencia','recibido_por','entregado_por',
-        'fecha_hora','ubicacion_actual','observaciones'
+        'fecha_hora','ubicacion_actual','observaciones',
     ];
 
     public function evidencia()
     {
-        return $this->belongsTo(Evidencia::class, 'id_evidencia');
+        return $this->belongsTo(Evidencia::class,'id_evidencia');
     }
 }

@@ -11,18 +11,13 @@ class Evidencia extends Model
     public    $timestamps = false;
 
     protected $fillable = [
-        'id_fallecido','descripcion',
-        'tipo','fecha_recoleccion',
-        'almacenado_en'
+        'id_fallecido','descripcion','tipo',
+        'fecha_recoleccion','almacenado_en',
     ];
 
-    public function fallecido()
-    {
-        return $this->belongsTo(Fallecido::class, 'id_fallecido');
-    }
+    /* Relationships */
+    public function fallecido() { return $this->belongsTo(Fallecido::class,'id_fallecido'); }
 
-    public function cadenasCustodia()
-    {
-        return $this->hasMany(CadenaCustodia::class, 'id_evidencia');
-    }
+    public function custodias() { return $this->hasMany(CadenaCustodia::class,'id_evidencia'); }
 }
+

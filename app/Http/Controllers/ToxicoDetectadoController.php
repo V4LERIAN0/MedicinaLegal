@@ -2,47 +2,61 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\ToxicoDetectado;
 use App\Models\Autopsia;
+use Illuminate\Http\Request;
 
 class ToxicoDetectadoController extends Controller
 {
     public function index()
     {
-        $toxicodetectados = ToxicoDetectado::all();
-        return view('toxicodetectado.index', compact('toxicodetectados'));
+        $toxicos = ToxicoDetectado::with('autopsia.fallecido')->paginate(10);
+        return view('toxicos.index', compact('toxicos'));
     }
 
     public function create()
     {
-        $autopsias = Autopsia::all();
-        return view('toxicodetectado.create', compact('autopsias'));
+        $autopsias = Autopsia::with('fallecido')->orderByDesc('id_autopsia')->get();
+        return view('toxicos.create', compact('autopsias'));
     }
 
-    public function store(Request $request)
+    public function store(Request $r)
     {
-        $request->validate(['id_autopsia' => 'required|exists:Autopsia,id_autopsia', 'sustancia' => 'required|max:100', 'nivel_detectado' => 'nullable|max:50', 'observaciones' => 'nullable|string']);
-        ToxicoDetectado::create($request->all());
-        return redirect()->route('toxicodetectado.index')->with('success','Creado');
+        $data = $r->validate([
+            'id_autopsia'     => 'required|exists:Autopsia,id_autopsia',
+            'sustancia'       => 'required|string|max:100',
+            'nivel_detectado' => 'nullable|string|max:50',
+            'observaciones'   => 'nullable|string',
+        ]);
+
+        ToxicoDetectado::create($data);
+        return redirect()->route('toxico_detectado.index')
+                         ->with('success','Tóxico registrado');
     }
 
-    public function edit(ToxicoDetectado $toxicodetectado)
+    public function edit(ToxicoDetectado $toxico_detectado)
     {
-        $autopsias = Autopsia::all();
-        return view('toxicodetectado.edit', compact('toxicodetectado', 'autopsias'));
+        $autopsias = Autopsia::with('fallecido')->orderByDesc('id_autopsia')->get();
+        return view('toxicos.edit', compact('toxico_detectado','autopsias'));
     }
 
-    public function update(Request $request, ToxicoDetectado $toxicodetectado)
+    public function update(Request $r, ToxicoDetectado $toxico_detectado)
     {
-        $request->validate(['id_autopsia' => 'required|exists:Autopsia,id_autopsia', 'sustancia' => 'required|max:100', 'nivel_detectado' => 'nullable|max:50', 'observaciones' => 'nullable|string']);
-        $toxicodetectado->update($request->all());
-        return back()->with('success','Actualizado');
+        $data = $r->validate([
+            'id_autopsia'     => 'required|exists:Autopsia,id_autopsia',
+            'sustancia'       => 'required|string|max:100',
+            'nivel_detectado' => 'nullable|string|max:50',
+            'observaciones'   => 'nullable|string',
+        ]);
+
+        $toxico_detectado->update($data);
+        return back()->with('success','Tóxico actualizado');
     }
 
-    public function destroy(ToxicoDetectado $toxicodetectado)
+    public function destroy(ToxicoDetectado $toxico_detectado)
     {
-        $toxicodetectado->delete();
-        return back()->with('success','Eliminado');
+        $toxico_detectado->delete();
+        return back()->with('success','Tóxico eliminado');
     }
 }
+

@@ -1,48 +1,45 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            Nuevo Informe
-        </h2>
-    </x-slot>
+<x-app-layout title="Nuevo Informe">
+  <h1 class="text-2xl font-semibold mb-6">Emitir Informe</h1>
 
-    <div class="py-12">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <form action="{{ route('informe.store') }}" method="POST">
-                        @csrf
+  <form method="POST" action="{{ route('informe.store') }}" class="space-y-6 max-w-lg">
+      @csrf
 
-    <div class="mb-3">
-        <label class="form-label">Id Autopsia</label>
-        <select name="id_autopsia" class="form-select">
-            <option value="">-- seleccione --</option>
-            @foreach($autopsias as $opt)
-                <option value="{{ $opt->id_autopsia }}"
-                    {{ old('id_autopsia', $informe->id_autopsia ?? '') == $opt->id_autopsia ? 'selected' : '' }}>
-                    {{ $opt->nombre ?? $opt->descripcion ?? 'opción' }}
-                </option>
-            @endforeach
-        </select>
-    </div>
+      {{-- Autopsia --}}
+      <div class="form-control">
+          <label class="label"><span class="label-text">Autopsia</span></label>
+          <select name="id_autopsia" class="select select-bordered" required>
+              <option disabled selected value="">Seleccione…</option>
+              @foreach($autopsias as $a)
+                  <option value="{{ $a->id_autopsia }}" @selected(old('id_autopsia')==$a->id_autopsia)>
+                      #{{ $a->id_autopsia }} - {{ $a->fallecido->nombre }} {{ $a->fallecido->apellido }}
+                  </option>
+              @endforeach
+          </select>
+      </div>
 
-    <div class="mb-3">
-        <label class="form-label">Fecha Emision</label>
-        <input type="date" name="fecha_emision" class="form-control" value="{{ old('fecha_emision', $informe->fecha_emision ?? '') }}">
-    </div>
+      {{-- Fecha emisión --}}
+      <div class="form-control">
+          <label class="label"><span class="label-text">Fecha de emisión</span></label>
+          <input type="date" name="fecha_emision" class="input input-bordered"
+                 value="{{ old('fecha_emision') ?: now()->toDateString() }}" required>
+      </div>
 
-    <div class="mb-3">
-        <label class="form-label">Observaciones</label>
-        <textarea name="observaciones" class="form-control">{{ old('observaciones', $informe->observaciones ?? '') }}</textarea>
-    </div>
+      {{-- Firmado por --}}
+      <div class="form-control">
+          <label class="label"><span class="label-text">Firmado por (opcional)</span></label>
+          <input name="firmado_por" class="input input-bordered" value="{{ old('firmado_por') }}">
+      </div>
 
-    <div class="mb-3">
-        <label class="form-label">Firmado Por</label>
-        <input type="text" name="firmado_por" class="form-control" value="{{ old('firmado_por', $informe->firmado_por ?? '') }}">
-    </div>
-                        <button class="btn btn-success">Guardar</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+      {{-- Observaciones --}}
+      <div class="form-control">
+          <label class="label"><span class="label-text">Observaciones</span></label>
+          <textarea name="observaciones" rows="4"
+                    class="textarea textarea-bordered">{{ old('observaciones') }}</textarea>
+      </div>
+
+      <div class="flex gap-3">
+          <x-button type="submit">Guardar</x-button>
+          <x-button color="ghost" href="{{ route('informe.index') }}">Cancelar</x-button>
+      </div>
+  </form>
 </x-app-layout>

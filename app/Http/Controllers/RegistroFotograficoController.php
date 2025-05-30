@@ -5,26 +5,37 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\RegistroFotografico;
 use App\Models\Fallecido;
+use Illuminate\Support\Facades\Storage;
 
 class RegistroFotograficoController extends Controller
 {
-    public function index()
-    {
-        $registrofotograficos = RegistroFotografico::all();
-        return view('registrofotografico.index', compact('registrofotograficos'));
-    }
-
     public function create()
-    {
-        $fallecidos = Fallecido::all();
-        return view('registrofotografico.create', compact('fallecidos'));
-    }
+{
+    $fallecidos = Fallecido::all();
+    return view('registro_fotografico.create', compact('fallecidos'));
+}
+
+public function index()
+{
+    $registros = RegistroFotografico::with('fallecido')->orderBy('fecha_foto', 'desc')->get();
+    return view('registro_fotografico.index', compact('registros'));
+}
 
     public function store(Request $request)
     {
-        $request->validate(['id_fallecido' => 'required|exists:Fallecido,id_fallecido', 'descripcion' => 'nullable|max:255', 'url_foto' => 'required|max:255', 'fecha_foto' => 'required|date']);
-        RegistroFotografico::create($request->all());
-        return redirect()->route('registrofotografico.index')->with('success','Creado');
+    $data = $request->validate([
+        'id_fallecido' => 'required|exists:Fallecido,id_fallecido',
+        'descripcion' => 'nullable|string|max:255',
+        'fecha_foto' => 'required|date',
+        'url_foto' => 'required|image|mimes:jpeg,png,jpg|max:2048'
+    ]);
+
+    $path = $request->file('url_foto')->store('fotos', 'public');
+    $data['url_foto'] = Storage::url($path);
+
+    RegistroFotografico::create($data);
+
+    return redirect()->route('registro_fotografico.index')->with('success', 'Registro creado');
     }
 
     public function edit(RegistroFotografico $registrofotografico)
@@ -45,4 +56,5 @@ class RegistroFotograficoController extends Controller
         $registrofotografico->delete();
         return back()->with('success','Eliminado');
     }
+
 }

@@ -1,45 +1,35 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            Informe
-        </h2>
-    </x-slot>
+<x-app-layout title="Informes">
+  <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-semibold">Informes</h1>
+      <x-button href="{{ route('informe.create') }}">➕ Nuevo Informe</x-button>
+  </div>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
+  <x-table :headers="['Autopsia','Fallecido','Emitido', 'Observaciones', 'Firmado por','Acciones']">
+      @foreach($informes as $i)
+          <tr>
+              <td>{{ $i->id_autopsia }}</td>
+              <td>{{ $i->autopsia->fallecido->nombre }} {{ $i->autopsia->fallecido->apellido }}</td>
+              <td>{{ \Carbon\Carbon::parse($i->fecha_emision)->format('d-m-Y') }}</td>
+              <td>{{ $i->observaciones }}</td>
+              <td>{{ $i->firmado_por ?? '—' }}</td>
 
-                    <a href="{{ route('informe.create') }}" class="btn btn-primary mb-3">
-                        Nuevo Informe
-                    </a>
+              <td class="flex gap-2 items-center">
+                  <x-button color="secondary" href="{{ route('informe.edit',$i) }}">Editar</x-button>
 
-                    @if(session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
-                    @endif
+                  @php $m='del-'.$i->id_informe @endphp
+                  <label for="{{ $m }}" class="btn btn-error btn-sm">Borrar</label>
 
-                    <table class="table table-bordered">
-                        <thead><tr><th>Id Autopsia</th><th>Fecha Emision</th><th>Observaciones</th><th>Firmado Por</th><th>Acciones</th></tr></thead>
-                        <tbody>
-                            @foreach($informes as $informe)
-                            <tr>
-                                <td>{{ $informe->id_autopsia }}</td><td>{{ $informe->fecha_emision }}</td><td>{{ $informe->observaciones }}</td><td>{{ $informe->firmado_por }}</td>
-                                <td>
-                                    <a href="{{ route('informe.edit', $informe) }}" class="btn btn-warning btn-sm">Editar</a>
-                                    <form action="{{ route('informe.destroy', $informe) }}" method="POST" class="d-inline">
-                                        @csrf @method('DELETE')
-                                        <button onclick="return confirm('¿Eliminar?')" class="btn btn-danger btn-sm">
-                                            Borrar
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                  <x-modal-confirm :modal_id="$m" title="Eliminar informe"
+                                   :message="'¿Eliminar informe #'.$i->id_informe.'?'">
+                      <form method="POST" action="{{ route('informe.destroy',$i) }}">
+                          @csrf @method('DELETE')
+                          <x-button color="error" type="submit">Eliminar</x-button>
+                      </form>
+                  </x-modal-confirm>
+              </td>
+          </tr>
+      @endforeach
+  </x-table>
 
-                </div>
-            </div>
-        </div>
-    </div>
+  <div class="mt-6">{{ $informes->links() }}</div>
 </x-app-layout>
