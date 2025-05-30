@@ -36,44 +36,47 @@ Route::middleware('auth')->group(function () {
 /* ---------- TODOS los CRUD protegidos por permisos ---------- */
 Route::middleware('auth')->group(function () {
 
-    Route::middleware('permission:cargo.*')
-        ->resource('cargo', CargoController::class);
+    Route::middleware('permission:cargo.read|cargo.create|cargo.update|cargo.delete')
+    ->resource('cargo', CargoController::class);
 
-    Route::middleware('permission:personal.*')
-        ->resource('personal', PersonalController::class);
+Route::middleware('permission:personal.read|personal.create|personal.update|personal.delete')
+    ->resource('personal', PersonalController::class);
 
-    Route::middleware('permission:causamuerte.*')
-        ->resource('causamuerte', CausaMuerteController::class);
+Route::middleware('permission:causamuerte.read|causamuerte.create|causamuerte.update|causamuerte.delete')
+    ->resource('causamuerte', CausaMuerteController::class);
 
-    Route::middleware('permission:sala.*')
-        ->resource('sala', SalaController::class);
+Route::middleware('permission:sala.read|sala.create|sala.update|sala.delete')
+    ->resource('sala', SalaController::class);
 
-    Route::middleware('permission:fallecido.*')
-        ->resource('fallecido', FallecidoController::class);
+Route::middleware('permission:fallecido.read|fallecido.create|fallecido.update|fallecido.delete')
+    ->resource('fallecido', FallecidoController::class);
 
-    Route::middleware('permission:autopsia.*')
-        ->resource('autopsia', AutopsiaController::class);
+Route::middleware('permission:autopsia.read|autopsia.create|autopsia.update|autopsia.delete')
+    ->resource('autopsia', AutopsiaController::class);
 
-    Route::middleware('permission:informe.*')
-        ->resource('informe', InformeController::class);
+Route::middleware('permission:informe.read|informe.create|informe.update|informe.delete')
+    ->resource('informe', InformeController::class);
 
-    Route::middleware('permission:evidencia.*')
-        ->resource('evidencia', EvidenciaController::class);
+Route::middleware('permission:evidencia.read|evidencia.create|evidencia.update|evidencia.delete')
+    ->resource('evidencia', EvidenciaController::class);
 
-    Route::middleware('permission:familiar.*')
-        ->resource('familiar', FamiliarController::class);
+Route::middleware('permission:familiar.read|familiar.create|familiar.update|familiar.delete')
+    ->resource('familiar', FamiliarController::class);
 
-    Route::middleware('permission:traslado.*')
-        ->resource('traslado', TrasladoController::class);
+Route::middleware('permission:traslado.read|traslado.create|traslado.update|traslado.delete')
+    ->resource('traslado', TrasladoController::class);
 
-    Route::middleware('permission:registro_fotografico.*')
-        ->resource('registro_fotografico', RegistroFotograficoController::class);
+//Route::middleware('permission:registro_fotografico.read|registro_fotografico.create|registro_fotografico.update|registro_fotografico.delete')
+  //  ->resource('registro_fotografico', RegistroFotograficoController::class);
 
-    Route::middleware('permission:toxico_detectado.*')
-        ->resource('toxico_detectado', ToxicoDetectadoController::class);
+Route::middleware('permission:toxico_detectado.read|toxico_detectado.create|toxico_detectado.update|toxico_detectado.delete')
+    ->resource('toxico_detectado', ToxicoDetectadoController::class);
 
-    Route::middleware('permission:cadena_custodia.*')
-        ->resource('cadena_custodia', CadenaCustodiaController::class);
+Route::middleware('permission:cadena_custodia.read|cadena_custodia.create|cadena_custodia.update|cadena_custodia.delete')
+    ->resource('cadena_custodia', CadenaCustodiaController::class);
+
+//Route::middleware('permission:usuario_sistema.read|usuario_sistema.create|usuario_sistema.update|usuario_sistema.delete')
+  //  ->resource('usuario', UsuarioSistemaController::class);
 
 });
 

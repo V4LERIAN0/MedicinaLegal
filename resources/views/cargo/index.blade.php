@@ -1,45 +1,31 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            Cargo
-        </h2>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-
-                    <a href="{{ route('cargo.create') }}" class="btn btn-primary mb-3">
-                        Nuevo Cargo
-                    </a>
-
-                    @if(session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
-                    @endif
-
-                    <table class="table table-bordered">
-                        <thead><tr><th>Nombre</th><th>Acciones</th></tr></thead>
-                        <tbody>
-                            @foreach($cargos as $cargo)
-                            <tr>
-                                <td>{{ $cargo->nombre }}</td>
-                                <td>
-                                    <a href="{{ route('cargo.edit', $cargo) }}" class="btn btn-warning btn-sm">Editar</a>
-                                    <form action="{{ route('cargo.destroy', $cargo) }}" method="POST" class="d-inline">
-                                        @csrf @method('DELETE')
-                                        <button onclick="return confirm('¿Eliminar?')" class="btn btn-danger btn-sm">
-                                            Borrar
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-
-                </div>
-            </div>
-        </div>
+<x-app-layout title="Cargos">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-semibold">Cargos</h1>
+        <x-button href="{{ route('cargo.create') }}">➕ Nuevo Cargo</x-button>
     </div>
+
+    <x-table :headers="['Nombre','Acciones']">
+        @foreach($cargos as $cargo)
+            <tr>
+                <td>{{ $cargo->nombre }}</td>
+                <td class="flex gap-2">
+                    <x-button color="secondary" href="{{ route('cargo.edit',$cargo) }}">Editar</x-button>
+
+                    {{-- delete with modal confirmation --}}
+                    @php $id = 'del-'.$cargo->id @endphp
+                    <label for="{{ $id }}" class="btn btn-error btn-sm">Borrar</label>
+
+                    <x-modal-confirm :modal_id="$id" title="Eliminar cargo"
+                                     :message="'¿Eliminar '.$cargo->nombre.'?'" confirm="Eliminar">
+                       <form method="POST" action="{{ route('cargo.destroy',$cargo) }}">
+                           @csrf @method('DELETE')
+                           <x-button color="error" type="submit">{{ $confirm ?? 'Eliminar' }}</x-button>
+                       </form>
+                    </x-modal-confirm>
+                </td>
+            </tr>
+        @endforeach
+    </x-table>
+
+    <div class="mt-6">{{ $cargo->links() }}</div> {{-- Laravel pagination --}}
 </x-app-layout>

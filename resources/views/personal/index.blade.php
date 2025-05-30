@@ -14,29 +14,32 @@
                         Nuevo Personal
                     </a>
 
-                    @if(session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
-                    @endif
+                    {{-- flash messages --}}
+                    <x-alert type="success"/>
+                    <x-alert type="danger"/>
 
-                    <table class="table table-bordered">
-                        <thead><tr><th>Nombre</th><th>Especialidad</th><th>Contacto</th><th>Id Cargo</th><th>Acciones</th></tr></thead>
-                        <tbody>
-                            @foreach($personals as $personal)
+                    {{-- reusable table --}}
+                    <x-datatable :headers="['Nombre','Especialidad','Contacto','Cargo']">
+                        @forelse ($personals as $personal)
                             <tr>
-                                <td>{{ $personal->nombre }}</td><td>{{ $personal->especialidad }}</td><td>{{ $personal->contacto }}</td><td>{{ $personal->id_cargo }}</td>
-                                <td>
-                                    <a href="{{ route('personal.edit', $personal) }}" class="btn btn-warning btn-sm">Editar</a>
-                                    <form action="{{ route('personal.destroy', $personal) }}" method="POST" class="d-inline">
-                                        @csrf @method('DELETE')
-                                        <button onclick="return confirm('¿Eliminar?')" class="btn btn-danger btn-sm">
-                                            Borrar
-                                        </button>
-                                    </form>
+                                <td class="px-4 py-2">{{ $personal->nombre }}</td>
+                                <td class="px-4 py-2">{{ $personal->especialidad }}</td>
+                                <td class="px-4 py-2">{{ $personal->contacto }}</td>
+                                <td class="px-4 py-2">{{ $personal->id_cargo }}</td>
+
+                                <td class="px-4 py-2 text-right space-x-2">
+                                    <x-edit-btn   :href="route('personal.edit',   $personal)" />
+                                    <x-delete-btn :action="route('personal.destroy',$personal)" />
                                 </td>
                             </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="p-4 italic text-center">
+                                    No hay registros.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </x-datatable>
 
                 </div>
             </div>

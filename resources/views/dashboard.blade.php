@@ -61,11 +61,6 @@
                 <x-dashboard-tile title="Traslados" route="{{ route('traslado.index') }}"/>
             @endcanany
 
-            {{-- Registro fotográfico --}}
-            @canany(['registro_fotografico.create','registro_fotografico.read','registro_fotografico.update','registro_fotografico.delete'])
-                <x-dashboard-tile title="Reg. Fotográfico" route="{{ route('registro_fotografico.index') }}"/>
-            @endcanany
-
             {{-- Tóxico detectado --}}
             @canany(['toxico_detectado.create','toxico_detectado.read','toxico_detectado.update','toxico_detectado.delete'])
                 <x-dashboard-tile title="Tóxicos Detectados" route="{{ route('toxico_detectado.index') }}"/>
